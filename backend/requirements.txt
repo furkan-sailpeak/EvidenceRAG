@@ -1,0 +1,12 @@
+# The web app (also installed in the Docker image)
+flask
+flask-cors
+gunicorn
+gevent
+psycogreen
+psycopg2-binary
+python-dotenv
+openai          # every model provider is called through the OpenAI-compatible API
+fastembed       # local embeddings (default)
+pydantic
+jinja2

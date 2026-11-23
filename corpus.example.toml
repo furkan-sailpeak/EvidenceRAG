@@ -1,0 +1,48 @@
+# A filled-in example of corpus.toml (a fictional company handbook).
+# Used by the tests, and as a reference when filling in your own corpus.toml.
+
+[app]
+name = "Handbook Assistant"
+tagline = "Search the Acme employee handbook"
+welcome = "Ask about Acme's HR policies, benefits, leave and workplace rules. Every answer cites the pages it comes from."
+input_placeholder = "Ask a question about the handbook..."
+example_questions = [
+    "How many days of parental leave do employees get?",
+    "What is the expense limit for client dinners?",
+    "Who approves remote work requests?",
+]
+footer = "© 2026 Acme · Internal use only"
+
+[collection]
+name = "the Acme employee handbook and HR policies"
+document_noun = "policy"
+vocabulary = "HR policies, benefit guides, forms and internal memos"
+persona = "an expert HR policy assistant"
+
+[scope]
+in_scope = "Acme's HR policies, benefits, leave, expenses, remote work and workplace rules"
+
+[examples]
+keywords = [
+    { question = "How many vacation days do new employees get?", terms = ["vacation days", "new employees"] },
+    { question = "What does the policy say about client dinners?", terms = ["client dinners"] },
+    { question = "Can I work remotely from Spain for a month?", terms = ["remote work", "abroad"] },
+]
+followup = { previous = "parental leave", question = "how long does it last?", rewritten = "how long does parental leave last?" }
+
+[background]
+enabled = false
+context = ""
+examples = []
+
+[documents]
+id_pattern = '\b(POL-\d{4})\b'
+id_example = "POL-0042"
+source_url = ""
+
+[metadata]
+document_types = ["policy", "form", "memo", "table"]
+fields = [
+    { name = "has_tables", description = "the page contains a table" },
+    { name = "has_signature", description = "the page is signed" },
+]

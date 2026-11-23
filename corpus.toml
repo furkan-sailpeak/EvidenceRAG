@@ -1,0 +1,73 @@
+# corpus.toml: everything about YOUR document collection.
+#
+# Replace every "TODO" (the app refuses to start while one is left), then run:
+#     make check-corpus
+# Nothing else in the repo needs to change for a new collection.
+# Models and API keys are set in .env, not here.
+
+# --- What users see in the web app ----------------------------------------------
+[app]
+name = "TODO"                  # e.g. "Handbook Assistant". Page title, welcome heading, and how the assistant introduces itself.
+tagline = "TODO"               # e.g. "Search the Acme employee handbook". Shown under the name.
+welcome = "TODO"               # 1–2 sentences on the welcome screen: what can be asked here.
+input_placeholder = "Ask a question about the documents..."
+example_questions = [          # Clickable on the welcome screen. Use real questions your documents answer.
+    "TODO",
+    "TODO",
+    "TODO",
+]
+footer = ""                    # Optional, e.g. "© 2026 Acme · Internal use only".
+
+# --- How the prompts describe the collection ------------------------------------
+[collection]
+name = "TODO"                  # Completes "questions about ...", e.g. "the Acme employee handbook and HR policies".
+document_noun = "document"     # What one file is called: "document", "policy", "report", "contract", ...
+vocabulary = "TODO"            # Kinds of sources the search can expect, e.g. "HR policies, benefit guides and internal memos".
+persona = "an expert research assistant"   # The voice answers are written in. Keep "a"/"an".
+
+# --- What the assistant answers ---------------------------------------------------
+[scope]
+in_scope = "TODO"              # Topics that are in scope, e.g. "Acme's HR policies, benefits, leave and workplace rules".
+                               # Questions on other subjects get a polite refusal.
+
+# --- Examples that teach the router to pick search keywords -------------------------
+# Use the kind of questions your users will ask, with the 1–3 words that best
+# find the answer (names, places, specific terms; no filler like "role" or "information").
+[examples]
+keywords = [
+    { question = "TODO", terms = ["TODO"] },
+    { question = "TODO", terms = ["TODO", "TODO"] },
+    { question = "TODO", terms = ["TODO", "TODO"] },
+]
+# A follow-up that only makes sense with the previous question, and its standalone rewrite.
+# e.g. previous = "parental leave", question = "how long does it last?",
+#      rewritten = "how long does parental leave last?"
+followup = { previous = "TODO", question = "TODO", rewritten = "TODO" }
+
+# --- Optional: one-line background on well-known entities -------------------------
+# For collections about public topics (history, science, well-known companies) the model
+# may add one uncited identifying sentence ("X was ...") taken from general knowledge.
+# Keep disabled for private or internal documents.
+[background]
+enabled = false
+context = ""                   # e.g. "the history of the Apollo space program"
+examples = []                  # 2–3 model sentences, e.g. "Neil Armstrong was the first person to walk on the Moon, in 1969."
+
+# --- Document IDs and source links -------------------------------------------------
+[documents]
+id_pattern = ""                # Optional regex with ONE group. A question containing such an ID opens that whole
+                               # document, e.g. '\b(POL-\d{4})\b'. File names (without .pdf) must equal the ID.
+id_example = ""                # e.g. "POL-0042" (needed when id_pattern is set).
+source_url = ""                # Where a cited source opens. Empty = the PDF from data/pdfs, served by the app.
+                               # Or a public copy, e.g. "https://files.example.com/{file_id}.pdf".
+
+# --- Page metadata extracted by a vision model during `make ocr` ---------------------
+# Lets users ask "how many pages have handwriting?" or "show me the forms".
+# Leave both lists empty to skip this step (no vision model needed then).
+[metadata]
+document_types = []            # e.g. ["letter", "memo", "form", "report", "invoice"]. Each page gets exactly one.
+fields = [                     # Yes/no properties per page. name = a column name (lowercase, underscores).
+    # { name = "has_tables", description = "the page contains a table" },
+    # { name = "has_handwriting", description = "the page contains handwriting" },
+    # { name = "has_signature", description = "the page is signed" },
+]

@@ -1,0 +1,26 @@
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+
+# Your documents and everything derived from them
+data/pdfs/*
+!data/pdfs/.gitkeep
+data/ocr/
+data/backups/
+data/models/
+corpus.toml.bak-*
+
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+node_modules/
+frontend/dist/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

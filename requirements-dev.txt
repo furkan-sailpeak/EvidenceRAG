@@ -1,0 +1,8 @@
+# Everything for local use: make setup installs this into .venv
+-r backend/requirements.txt
+-r backend/requirements-ingest.txt
+-r eval/requirements.txt
+pytest
+pytest-mock
+ruff
+pre-commit

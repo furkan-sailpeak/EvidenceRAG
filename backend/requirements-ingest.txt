@@ -1,0 +1,5 @@
+# make ocr / ingest / embed
+pypdfium2       # reads PDFs and renders pages; no system packages needed
+pillow
+pytesseract     # needs the tesseract program: brew install tesseract / apt install tesseract-ocr
+# Optional, installed by `make install-google-ocr`: google-cloud-vision
