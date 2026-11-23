@@ -24,9 +24,36 @@ make dev            # 8. open the app at http://localhost:5173
 
 Lost? `make status` shows how far along each step is and what to run next. `make` lists every command.
 
-## How it works
+## Step by step
 
-**1. Preparing the documents** (once, and again after adding files):
+```mermaid
+flowchart TD
+    A["1 · make setup<br/>installs everything"] --> B["2 · Open .env<br/>paste your API key"]
+    B --> C["3 · make configure<br/>describe your collection in the form"]
+    C --> D["4 · Copy your PDFs into data/pdfs/"]
+    D --> S{"Are some of them<br/>scans or photos?"}
+    S -->|yes| T["Install tesseract once:<br/>brew install tesseract"]
+    S -->|no| E
+    T --> E["5 · make db<br/>starts the database"]
+    E --> F["6 · make ocr<br/>reads every page"]
+    F --> G{"make status:<br/>all pages read?"}
+    G -->|no, it stopped| F
+    G -->|yes| H["7 · make ingest<br/>loads the pages"]
+    H --> I["8 · make embed<br/>prepares the search"]
+    I --> J["9 · make dev<br/>try it at localhost:5173"]
+    J --> K{"Happy with<br/>the answers?"}
+    K -->|not yet| L["Improve the examples and scope:<br/>make configure, then make dev again"]
+    L --> J
+    K -->|yes| M["10 · make up<br/>run it for others"]
+    N["Added or changed documents?"] -.->|repeat 6 to 8| F
+```
+
+Lost at any point? `make status` says what is done and what to run next.
+
+<details>
+<summary><b>Under the hood</b> (for developers)</summary>
+
+**Preparing the documents:**
 
 ```mermaid
 flowchart LR
@@ -38,7 +65,7 @@ flowchart LR
     toml["corpus.toml<br/>your collection"] -. metadata fields .-> ocr
 ```
 
-**2. Answering a question:**
+**Answering a question:**
 
 ```mermaid
 flowchart TD
@@ -62,6 +89,8 @@ flowchart TD
 
 The answer is checked before it is shown, so users never see text that later changes. The prompts
 (`backend/prompts/*.j2`) are generic and read your collection's details from `corpus.toml`.
+
+</details>
 
 ## What goes where
 
