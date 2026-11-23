@@ -24,6 +24,45 @@ make dev            # 8. open the app at http://localhost:5173
 
 Lost? `make status` shows how far along each step is and what to run next. `make` lists every command.
 
+## How it works
+
+**1. Preparing the documents** (once, and again after adding files):
+
+```mermaid
+flowchart LR
+    pdfs[("data/pdfs/<br/>PDFs and scans")] --> ocr["make ocr<br/>PDF text layer, or OCR for scans<br/>+ page metadata from a vision model"]
+    ocr --> json[("data/ocr/<br/>one JSON per document")]
+    json --> ingest["make ingest<br/>pages table + full-text index"]
+    ingest --> embed["make embed<br/>embeddings + vector index"]
+    embed --> db[("Postgres + pgvector")]
+    toml["corpus.toml<br/>your collection"] -. metadata fields .-> ocr
+```
+
+**2. Answering a question:**
+
+```mermaid
+flowchart TD
+    q["Question + chat history"] --> id{"Contains a<br/>document ID?"}
+    id -- yes --> doc["Answer from that whole document"]
+    id -- no --> router["Router - fast model<br/>rewrites follow-ups, picks search words, chooses a route"]
+    router -- small talk --> chat["Short reply, no search"]
+    router -- off-topic --> refuse["Polite refusal"]
+    router -- how many pages --> meta["Exact counts from the page metadata<br/>+ sample pages"]
+    router -- question --> search["Hybrid search<br/>keywords: full-text + meaning: vectors"]
+    search --> rerank["Rerank - fast model<br/>keeps the most relevant pages"]
+    rerank --> gen["Write the answer - answer model<br/>every claim cites a page as [N]"]
+    gen --> ground{"Grounded in<br/>the sources?"}
+    ground -- no --> retry["Rephrase the search, retrieve again,<br/>rewrite the answer"]
+    retry --> verify
+    ground -- yes --> verify["Check every [N] citation<br/>re-point or drop wrong ones"]
+    verify --> out["Answer with clickable page links"]
+    doc --> out
+    meta --> out
+```
+
+The answer is checked before it is shown, so users never see text that later changes. The prompts
+(`backend/prompts/*.j2`) are generic and read your collection's details from `corpus.toml`.
+
 ## What goes where
 
 | File | What it is | How to fill it |
@@ -69,20 +108,6 @@ For every page:
 Results are saved in `data/ocr/` every few pages: an interrupted run continues where it stopped.
 `make ocr FORCE=1` starts over and first moves the old results to `data/backups/`. `make ocr LIMIT=5`
 tries the first five files. Added metadata fields later? `make metadata` fills in only those.
-
-## How answering works
-
-```
-question → router (small model): rewrite follow-ups, pick search words, decide the route
-  ├─ small talk / off-topic → short reply / refusal, no search
-  ├─ "how many pages ..."   → exact counts from the page metadata
-  ├─ a document ID          → answer from that whole document
-  └─ otherwise → search (keywords + meaning) → rerank → write the answer
-                → check it is grounded in the sources → verify every [N] citation
-```
-
-The answer is checked before it is shown, so users never see text that later changes. Prompts are
-in `backend/prompts/*.j2` and read your collection's details from `corpus.toml`.
 
 ## Running it for others
 
